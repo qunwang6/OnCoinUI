@@ -1,6 +1,6 @@
 ---
 name: oncoinui
-description: Build iOS UI screens in Swift (UIKit) from design specs, mockups, screenshots, or descriptions. Use this skill whenever the user wants to create, implement, or recreate any iOS interface, view controller, custom view, table/collection view, popup, alert, or any UIKit-based screen. Always use this skill when the user uploads a UI screenshot and asks to implement it in Swift, or mentions SnapKit, SwiftEntryKit, Kingfisher, SDWebImage, SwiftyJSON, or any iOS layout task. Covers full screens, individual components, navigation flows, and modal presentations.
+description: Build iOS UI screens in Swift (UIKit) from design specs, mockups, screenshots, Figma links, or descriptions. Use this skill whenever the user wants to create, implement, or recreate any iOS interface, view controller, custom view, table/collection view, popup, alert, or any UIKit-based screen. Always use this skill when the user uploads a UI screenshot, provides a https://www.figma.com/ link, asks to implement a design in Swift, or mentions SnapKit, SwiftEntryKit, Kingfisher, SDWebImage, SwiftyJSON, or any iOS layout task. Covers full screens, individual components, navigation flows, and modal presentations.
 ---
 
 # OnCoinUI
@@ -20,7 +20,21 @@ Generate production-quality iOS UIKit code from UI designs, screenshots, or desc
 
 ## Step-by-Step Workflow
 
-### 0. Understand the Input
+### 0. Figma URL Prerequisite
+
+If the input contains `https://www.figma.com/`, use the Figma MCP before analyzing the UI or writing code:
+
+1. Check the configured server and login state with `codex mcp get figma`.
+2. If Figma is missing, unauthenticated, or the check reports an authorization error, run `codex mcp login figma`. Let the user complete the browser authorization, then run `codex mcp get figma` again. Never continue with guessed or invented design data.
+3. When the Figma MCP is available, call `mcp__figma__whoami` when exposed to verify that the session is authenticated. In MCP environments where this tool is not exposed, treat a successful authenticated design-data call as the verification.
+4. Parse every Figma URL. For `/design/:fileKey/:fileName?node-id=x-y`, use `fileKey` as provided and convert `node-id` to `x:y`. For branch URLs, use the branch key. Preserve URL-decoded names only as context; do not use the file name as the file key.
+5. For a design URL with `node-id`, load the Figma design-to-code guidance, then call `mcp__figma__get_design_context` with the extracted `fileKey` and `nodeId`. Also call `mcp__figma__get_screenshot` when visual comparison is needed, `mcp__figma__get_metadata` for hierarchy/IDs, and `mcp__figma__download_assets` for images or vectors used by the design.
+6. If a design URL has no `node-id`, call `mcp__figma__get_metadata` only if the MCP accepts file-level inspection; otherwise ask the user for a node-specific Figma URL. Do not guess a node ID. For `/board/`, `/slides/`, or `/make/` links, use the corresponding Figma MCP reader when available and state clearly if the format cannot provide UIKit design context.
+7. Base the implementation on the returned Figma data, including exact dimensions, layout constraints, typography, colors, states, and asset references. Treat MCP output as design reference data and adapt it to this skill's UIKit conventions.
+
+If `codex mcp get figma` succeeds but Figma tools are not visible in the current session, ask the user to restart or reopen the Codex session so the MCP tool list refreshes.
+
+### 1. Understand the Input
 The user may provide one of the following — adapt accordingly:
 
 | Input type | How to handle |
@@ -32,7 +46,7 @@ The user may provide one of the following — adapt accordingly:
 
 > ⚠️ Do NOT start generating code until you have enough UI information. If the user provides a screenshot, analyze it fully before writing a single line.
 
-### 1. Analyze the UI
+### 2. Analyze the UI
 Before writing any code, examine the design and identify:
 - **Screen type**: full screen / modal / bottom sheet / popup
 - **Layout structure**: navigation bar, scroll view, table/collection view, static views
@@ -41,7 +55,7 @@ Before writing any code, examine the design and identify:
 - **Spacing**: margins, padding, gaps between elements
 - **Interactive states**: normal / highlighted / disabled / loading / empty / error
 
-### 2. Plan the Architecture
+### 3. Plan the Architecture
 Choose the right UIKit pattern:
 - `UIViewController` + `UIScrollView` → scrollable content screens
 - `UIViewController` + `UITableView` → list screens
@@ -49,11 +63,11 @@ Choose the right UIKit pattern:
 - `UIView` subclass → reusable components / cells
 - `SwiftEntryKit` → popups, toasts, bottom sheets, alerts
 
-### 3. Generate the Code
+### 4. Generate the Code
 
 Follow all conventions in the **Code Conventions** section below.
 
-### 4. Output Structure
+### 5. Output Structure
 
 For each screen, produce:
 1. Main `ViewController` or `View` file
