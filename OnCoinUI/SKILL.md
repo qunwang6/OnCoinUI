@@ -167,19 +167,19 @@ struct UserModel {
 }
 ```
 
-### Localization — SCLanguageManager (Always Use This)
+### Localization — SCLocalizedText (Always Use This)
 
-> Never use hardcoded strings for UI text. This project uses `SCLanguageManager` for runtime language switching.
+> Never use hardcoded strings for UI text. Swift code uses `SCLocalizedText` for runtime language switching.
 ```swift
 // ✅ Correct
-titleLabel.text = SCLanguageManager.shared().localizedString(forKey: "register_email")
+titleLabel.text = SCLocalizedText("register_email")
 
 // ❌ Never do this
 titleLabel.text = "Email"
 titleLabel.text = "Email"
 ```
 
-For Objective-C code, use the project's `SCLocalizedString(key)` macro. For Swift code, use `SCLanguageManager.shared().localizedString(forKey:)`.
+For Objective-C code, use the project's `SCLocalizedString(key)` macro. For Swift code, use `SCLocalizedText(_:)`.
 
 Before writing translations, read `translation.csv` in this skill directory as the primary translation reference. Reuse its translation when the requested key and language are present. Never modify `translation.csv`. If a translation is missing, translate it yourself while preserving placeholders such as `{{count}}`, `{{value}}`, and `{{time}}`. The CSV's `zh-CN` column is reference-only and must not be output; the project's Chinese output is `zh_TW`.
 
@@ -492,6 +492,6 @@ Before finishing, verify:
 - [ ] Bottom sheet popup view sets `entryBackground = .clear` and draws its own background
 - [ ] Bottom sheet config includes `safeArea = .overridden` and `verticalOffset = 0`
 - [ ] Do NOT output `extension UIColor` definitions — this extension already exists in the project
-- [ ] Swift UI strings use `SCLanguageManager.shared().localizedString(forKey:)`; Objective-C uses `SCLocalizedString(key)` — no hardcoded text
+- [ ] Swift UI strings use `SCLocalizedText(_:)`; Objective-C uses `SCLocalizedString(key)` — no hardcoded text
 - [ ] Existing localization keys are preserved; new keys follow the project's existing key style
 - [ ] All 14 project language translations are output alongside the code: `ar-SA`, `es-ES`, `pt-BR`, `fr-FR`, `ja-JP`, `ko-KR`, `ur-PK`, `id-ID`, `hi-IN`, `vi-VN`, `ru-RU`, `tr-TR`, `en-US`, `zh_TW`
