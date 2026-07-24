@@ -9,7 +9,7 @@
 - 📸 **Multiple input types**: UI screenshots / Figma descriptions / text requirements
 - 📐 **SnapKit layout**: Full Auto Layout DSL — no `frame`, no Storyboard
 - 🪟 **Bottom sheets**: Standard SwiftEntryKit config with home indicator support
-- 🎨 **Inline colors**: Hex values written directly via `UIColor.colorWithHexString(hex:)` — no `AppColor` enum
+- 🎨 **Colors**: `SwiftHEXColors` and `Hue` helpers — no custom hex extension or `AppColor` enum
 - 🖼️ **Kingfisher image loading**: Placeholder, fade animation, cell reuse cancellation
 - 📦 **SwiftyJSON models**: Unified `init(json: JSON)` parsing pattern
 - 🌐 **Localization**: `SCLanguageManager` with auto-output in the project's 14 supported languages
@@ -139,19 +139,19 @@ Each file uses consistent `MARK` sections:
 
 ### Colors
 
-Write hex values **inline** — do NOT define an `AppColor` enum or any named color constants.
+Use `SwiftHEXColors` and `Hue` helpers. Do not define a custom hex extension or an `AppColor` enum.
 
 ```swift
 // ✅ Correct — inline hex values
-label.textColor       = UIColor.colorWithHexString(hex: "#2D2F35")
-button.backgroundColor = UIColor.colorWithHexString(hex: "#149D93")
-view.backgroundColor  = UIColor.colorWithHexString(hex: "#F8F8F8")
+label.textColor       = UIColor(hexString: "#2D2F35")
+button.backgroundColor = UIColor(hexString: "#149D93")
+view.backgroundColor  = UIColor(hexString: "#F8F8F8")
 
 // ❌ Forbidden — no AppColor enum
 enum AppColor {
-    static let primary = UIColor.colorWithHexString(hex: "#149D93")
+    static let primary = UIColor(hexString: "#149D93")
 }
-label.textColor = AppColor.primary
+label.textColor = UIColor(hex: "#149D93")
 ```
 
 ### Layout Spacing

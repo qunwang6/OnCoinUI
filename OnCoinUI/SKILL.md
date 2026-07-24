@@ -100,41 +100,24 @@ private func setupConstraints() {
 
 ---
 
-### Colors — UIColor.colorWithHexString (Always Use This)
+### Colors — SwiftHEXColors and Hue
 
-> ⚠️ Never use `UIColor(hexString:)`, `UIColor(hex:)`, Hue, or SwiftHEXColors — always use `UIColor.colorWithHexString(hex:)` via the extension below.`UIColor+Hex.swift` already exists in the project. **Do NOT output this extension definition** in generated code — just call it directly.
+Use the color helpers already provided by the project's `SwiftHEXColors` and `Hue` dependencies. Do not add a custom `UIColor` hex extension or define an `AppColor` enum.
 
 ```swift
-// UIColor+Hex.swift — include this extension in every project
-extension UIColor {
-    static func colorWithHexString(hex: String) -> UIColor {
-        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hexSanitized = hexSanitized.hasPrefix("#") ? String(hexSanitized.dropFirst()) : hexSanitized
+import Hue
+import SwiftHEXColors
 
-        var rgb: UInt64 = 0
-        Scanner(string: hexSanitized).scanHexInt64(&rgb)
+// SwiftHEXColors: parse a hex string
+let primary = UIColor(hexString: "#007AFF")
+let dimmed = UIColor(hexString: "#212226")?.withAlphaComponent(0.5)
 
-        let r = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
-        let g = CGFloat((rgb & 0x00FF00) >> 8)  / 255.0
-        let b = CGFloat(rgb & 0x0000FF)          / 255.0
-
-        return UIColor(red: r, green: g, blue: b, alpha: 1.0)
-    }
-}
+// Hue: parse and adjust colors
+let accent = UIColor(hex: "#149D93")
+let lighterAccent = accent.lighten(by: 0.1)
 ```
 
-**Usage:**
-```swift
-❌ Do NOT define `enum AppColor` or any named color constants — write hex values inline directly.
-// ✅ Correct
-let primary = UIColor.colorWithHexString(hex: "#007AFF")
-let dimmed  = UIColor.colorWithHexString(hex: "#212226").withAlphaComponent(0.5)
-
-// ❌ Never do this
-let c1 = UIColor(hexString: "#FF6B35")   // SwiftHEXColors — forbidden
-let c2 = UIColor(hex: "#2C3E50")         // SwiftHEXColors — forbidden
-let c3 = primary.lighten(byAmount: 0.2)  // Hue — forbidden
-```
+Use inline hex values for one-off colors. Use Hue adjustments only when a derived color is required, and keep color expressions compatible with the installed library versions.
 
 ---
 
@@ -255,7 +238,7 @@ When generating any UI text, you must also output the corresponding localization
 ```swift
 func showToast(message: String, isSuccess: Bool = true) {
     var attributes = EKAttributes.topToast
-    attributes.entryBackground = .color(color: EKColor(isSuccess ? AppColor.primary : .systemRed))
+    attributes.entryBackground = .color(color: EKColor(isSuccess ? UIColor(hexString: "#149D93") : .systemRed))
     attributes.displayDuration = 2.5
     attributes.shadow = .active(with: .init(color: .black, opacity: 0.2, radius: 6))
     
@@ -403,8 +386,8 @@ final class ProductCell: UITableViewCell {
         containerView.addSubview(titleLabel)
         containerView.addSubview(priceLabel)
         
-        titleLabel.textColor = UIColor.colorWithHexString(hex: "#2D2F35")
-        priceLabel.textColor = UIColor.colorWithHexString(hex: "#149D93")
+        titleLabel.textColor = UIColor(hexString: "#2D2F35")
+        priceLabel.textColor = UIColor(hexString: "#149D93")
     }
     
     private func setupConstraints() {
@@ -448,9 +431,9 @@ final class ProductCell: UITableViewCell {
 ```swift
 private func setupNavigationBar() {
     title = "Page Title"
-    navigationController?.navigationBar.tintColor = AppColor.primary
+    navigationController?.navigationBar.tintColor = UIColor(hexString: "#149D93")
     navigationController?.navigationBar.titleTextAttributes = [
-        .foregroundColor: AppColor.text,
+        .foregroundColor: UIColor(hexString: "#212226"),
     ]
     // Right bar button
     let rightBtn = UIBarButtonItem(image: UIImage(systemName: "bell"), 
@@ -483,7 +466,7 @@ func hideLoading() {
 func showEmptyState(message: String = "暂无数据") {
     let label = UILabel()
     label.text = message
-    label.textColor = AppColor.subtext
+    label.textColor = UIColor(hexString: "#6B7280")
     label.tag = 998
     view.addSubview(label)
     label.snp.makeConstraints { $0.center.equalToSuperview() }
@@ -497,7 +480,7 @@ func showEmptyState(message: String = "暂无数据") {
 Before finishing, verify:
 - [ ] No `frame` / `AutoresizingMask` usage — SnapKit only
 - [ ] Safe area insets handled (`safeAreaLayoutGuide`)
-- [ ] All colors use `UIColor.colorWithHexString(hex:)` inline — no `AppColor` enum, never Hue or SwiftHEXColors
+- [ ] Colors use `SwiftHEXColors` and `Hue` helpers — no custom hex extension or `AppColor` enum
 - [ ] Images use `kf.setImage` with placeholder
 - [ ] `prepareForReuse` cancels Kingfisher tasks in cells
 - [ ] JSON models use `SwiftyJSON` with `init(json: JSON)`
