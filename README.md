@@ -10,6 +10,7 @@
 - 📐 **SnapKit layout**: Full Auto Layout DSL — no `frame`, no Storyboard
 - 🪟 **Bottom sheets**: Standard SwiftEntryKit config with home indicator support
 - 🎨 **Colors**: `SwiftHEXColors` and `Hue` helpers — no custom hex extension or `AppColor` enum
+- 🌈 **Gradients**: Prefer the project's `UIView+Gradient.swift` APIs for `UIView` and `UIButton` backgrounds
 - 🖼️ **Kingfisher image loading**: Placeholder, fade animation, cell reuse cancellation
 - 📦 **SwiftyJSON models**: Unified `init(json: JSON)` parsing pattern
 - 🌐 **Localization**: `SCLanguageManager` with auto-output in the project's 14 supported languages
@@ -154,6 +155,27 @@ enum AppColor {
 label.textColor = UIColor(hex: "#149D93")
 ```
 
+### Gradients
+
+For `UIView` and `UIButton` backgrounds, prefer the existing implementation at:
+
+`/Volumes/BACKUP/Code/QiuXing/OnCoin/SeeCoin/Modules/HomePage/LimitTask/Common/UIView+Gradient.swift`
+
+```swift
+cardView.addHorizontalGradient(
+    colors: [UIColor(hexString: "#149D93")!, UIColor(hexString: "#007AFF")!],
+    cornerRadius: 12
+)
+
+actionButton.backgroundColor = .clear
+actionButton.addVerticalGradient(
+    colors: [UIColor(hexString: "#149D93")!, UIColor(hexString: "#0D766F")!],
+    cornerRadius: 8
+)
+```
+
+Call `updateGradientFrame()` after Auto Layout, such as from `viewDidLayoutSubviews()` or a reusable view's `layoutSubviews()`. Use `removeGradient()` before replacing an existing gradient. Only use a custom `CAGradientLayer` when this implementation cannot express the required behavior.
+
 ### Layout Spacing
 
 Write spacing values **as inline literals** in SnapKit constraints — do NOT define an `enum Layout`.
@@ -210,6 +232,10 @@ SwiftEntryKit.display(entry: popupView, using: attributes)
 ```
 
 > ⚠️ Never use `EKAttributes.bottomFloat` — always use the full config above.
+
+### Verification and Execution
+
+Code generation does not automatically compile, install, launch, or run the app. Verification is limited to static inspection, formatting checks, and reviewing the generated diff unless the user explicitly requests compilation, tests, simulator execution, or another runtime verification step.
 
 ---
 
