@@ -67,6 +67,10 @@ Choose the right UIKit pattern:
 
 Follow all conventions in the **Code Conventions** section below.
 
+### 4.5. Verification and Execution
+
+After generating code, do not automatically compile, launch, install, or run the app. Limit verification to static inspection, formatting checks, and reviewing the generated diff unless the user explicitly asks for compilation, tests, simulator execution, or another runtime verification step.
+
 ### 5. Output Structure
 
 For each screen, produce:
@@ -132,6 +136,39 @@ let lighterAccent = accent.lighten(by: 0.1)
 ```
 
 Use inline hex values for one-off colors. Use Hue adjustments only when a derived color is required, and keep color expressions compatible with the installed library versions.
+
+### Gradients — UIView+Gradient (Prefer This Implementation)
+
+For `UIView` backgrounds and `UIButton` backgrounds, prefer the project's existing `UIView+Gradient.swift` implementation:
+`/Volumes/BACKUP/Code/QiuXing/OnCoin/SeeCoin/Modules/HomePage/LimitTask/Common/UIView+Gradient.swift`
+
+Use these APIs instead of creating an ad hoc `CAGradientLayer`:
+
+```swift
+// UIView or UIButton can use the same UIView extension.
+cardView.addHorizontalGradient(
+    colors: [UIColor(hexString: "#149D93")!, UIColor(hexString: "#007AFF")!],
+    cornerRadius: 12
+)
+
+actionButton.backgroundColor = .clear
+actionButton.addVerticalGradient(
+    colors: [UIColor(hexString: "#149D93")!, UIColor(hexString: "#0D766F")!],
+    cornerRadius: 8
+)
+```
+
+Available methods are `addHorizontalGradient`, `addVerticalGradient`, and `addCustomGradient`. Use `locations` when the design specifies gradient stops. Because the gradient layer uses the view's current `bounds`, update it after Auto Layout has run:
+
+```swift
+override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    cardView.updateGradientFrame()
+    actionButton.updateGradientFrame()
+}
+```
+
+For reusable `UIView` or `UIButton` subclasses, call `updateGradientFrame()` from `layoutSubviews()`. Use `removeGradient()` before replacing a gradient, and do not add a second gradient layer for the same view. Set a button's `backgroundColor` to `.clear` so it does not cover the gradient. Only use a custom `CAGradientLayer` when the existing extension cannot express the required behavior, and explain why.
 
 ---
 
@@ -493,8 +530,10 @@ func showEmptyState(message: String = "暂无数据") {
 
 Before finishing, verify:
 - [ ] No `frame` / `AutoresizingMask` usage — SnapKit only
+- [ ] Code generation does not trigger automatic compilation or app execution unless explicitly requested
 - [ ] Safe area insets handled (`safeAreaLayoutGuide`)
 - [ ] Colors use `SwiftHEXColors` and `Hue` helpers — no custom hex extension or `AppColor` enum
+- [ ] `UIView` and `UIButton` gradients prefer the existing `UIView+Gradient.swift` APIs; gradient frames are updated after layout
 - [ ] Images use `kf.setImage` with placeholder
 - [ ] `prepareForReuse` cancels Kingfisher tasks in cells
 - [ ] JSON models use `SwiftyJSON` with `init(json: JSON)`
