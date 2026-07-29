@@ -1,6 +1,6 @@
 ---
 name: oncoinui
-description: Build iOS UI screens from design specs, mockups, screenshots, Figma links, or descriptions. Match the implementation language to the current page: SwiftUI for SwiftUI pages, Objective-C for Objective-C pages, and Swift with SnapKit for all other pages. Use this skill whenever the user wants to create, implement, or recreate an iOS interface, view controller, custom view, table/collection view, popup, alert, or navigation flow.
+description: "Build iOS UI screens from design specs, mockups, screenshots, Figma links, or descriptions. Match the implementation language to the current page: SwiftUI for SwiftUI pages, Objective-C for Objective-C pages, and Swift with SnapKit for all other pages. Use this skill whenever the user wants to create, implement, or recreate an iOS interface, view controller, custom view, table/collection view, popup, alert, or navigation flow."
 ---
 
 # OnCoinUI
