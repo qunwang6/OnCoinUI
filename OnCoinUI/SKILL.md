@@ -1,13 +1,27 @@
 ---
 name: oncoinui
-description: Build iOS UI screens in Swift (UIKit) from design specs, mockups, screenshots, Figma links, or descriptions. Use this skill whenever the user wants to create, implement, or recreate any iOS interface, view controller, custom view, table/collection view, popup, alert, or any UIKit-based screen. Always use this skill when the user uploads a UI screenshot, provides a https://www.figma.com/ link, asks to implement a design in Swift, or mentions SnapKit, SwiftEntryKit, Kingfisher, SDWebImage, SwiftyJSON, or any iOS layout task. Covers full screens, individual components, navigation flows, and modal presentations.
+description: Build iOS UI screens from design specs, mockups, screenshots, Figma links, or descriptions. Match the implementation language to the current page: SwiftUI for SwiftUI pages, Objective-C for Objective-C pages, and Swift with SnapKit for all other pages. Use this skill whenever the user wants to create, implement, or recreate an iOS interface, view controller, custom view, table/collection view, popup, alert, or navigation flow.
 ---
 
 # OnCoinUI
 
-Generate production-quality iOS UIKit code from UI designs, screenshots, or descriptions.
+Generate production-quality iOS UI code from UI designs, screenshots, or descriptions.
 
-## Tech Stack (Always Use These)
+## Implementation Language and UI Framework (Always Decide First)
+
+Before planning or writing code, inspect the target page and its nearby files to determine its existing implementation style. Preserve that style; do not migrate a page merely to implement a new UI.
+
+| Current page implementation | Required output |
+|---|---|
+| SwiftUI (`import SwiftUI`, `View`, `body`, `@State`, etc.) | SwiftUI. Use native SwiftUI layout and components; do not introduce UIKit or SnapKit. |
+| Objective-C (`.m` / `.mm`, `@interface`, `@implementation`, etc.) | Objective-C. Follow the page's existing Objective-C UI and layout conventions; do not rewrite it in Swift. |
+| Any other case, including a new page with no established style | Swift UIKit with SnapKit. |
+
+Use the language of the target file as the strongest signal. When the target file is not supplied, inspect the containing feature/module. If the style still cannot be established, use the default: **Swift UIKit + SnapKit**. Apply framework-specific guidance below only when it matches the selected implementation style.
+
+## Default Swift UIKit Tech Stack
+
+These dependencies apply to the default **Swift UIKit + SnapKit** path, and to an existing Swift UIKit page where they are already used.
 
 | Purpose | Library |
 |---|---|
@@ -56,7 +70,14 @@ Before writing any code, examine the design and identify:
 - **Interactive states**: normal / highlighted / disabled / loading / empty / error
 
 ### 3. Plan the Architecture
-Choose the right UIKit pattern:
+
+Select the architecture that matches the implementation decision above:
+
+- **SwiftUI page:** extend or compose SwiftUI `View`s and use SwiftUI navigation, state, layout, and presentation APIs already used by the feature.
+- **Objective-C page:** extend the existing Objective-C controller/view hierarchy and follow the module's existing layout mechanism and naming conventions.
+- **Default Swift UIKit page:** choose the right UIKit pattern below and use SnapKit for layout.
+
+For the default Swift UIKit path, choose the right pattern:
 - `UIViewController` + `UIScrollView` → scrollable content screens
 - `UIViewController` + `UITableView` → list screens
 - `UIViewController` + `UICollectionView` → grid / complex layouts
@@ -81,7 +102,9 @@ For each screen, produce:
 
 ---
 
-## Code Conventions
+## Swift UIKit + SnapKit Code Conventions
+
+This section applies only when the selected implementation is Swift UIKit. Do not apply its UIKit, SnapKit, Kingfisher, SwiftyJSON, or SwiftEntryKit examples to a SwiftUI or Objective-C page unless that page already uses the relevant dependency and the integration is appropriate.
 
 ### File Structure
 ```swift
@@ -218,7 +241,7 @@ struct UserModel {
 }
 ```
 
-### Localization — SCLocalizedText (Always Use This)
+### Localization (Always Use This)
 
 > Never use hardcoded strings for UI text. Swift code uses `SCLocalizedText` for runtime language switching.
 ```swift
@@ -230,7 +253,7 @@ titleLabel.text = "Email"
 titleLabel.text = "Email"
 ```
 
-For Objective-C code, use the project's `SCLocalizedString(key)` macro. For Swift code, use `SCLocalizedText(_:)`.
+For Objective-C code, use the project's `SCLocalizedString(key)` macro. For Swift (including SwiftUI) code, use `SCLocalizedText(_:)`.
 
 Before writing translations, read `translation.csv` in this skill directory as the primary translation reference. Reuse its translation when the requested key and language are present. Never modify `translation.csv`. If a translation is missing, translate it yourself while preserving placeholders such as `{{count}}`, `{{value}}`, and `{{time}}`. The CSV's `zh-CN` column is reference-only and must not be output; the project's Chinese output is `zh_TW`.
 
@@ -529,7 +552,9 @@ func showEmptyState(message: String = "暂无数据") {
 ## Output Checklist
 
 Before finishing, verify:
-- [ ] No `frame` / `AutoresizingMask` usage — SnapKit only
+- [ ] The output matches the current page: SwiftUI page → SwiftUI; Objective-C page → Objective-C; otherwise → Swift UIKit + SnapKit
+- [ ] A SwiftUI or Objective-C page was not migrated to UIKit/Swift solely for this UI work
+- [ ] For Swift UIKit output: no `frame` / `AutoresizingMask` usage — SnapKit only
 - [ ] Code generation does not trigger automatic compilation or app execution unless explicitly requested
 - [ ] Safe area insets handled (`safeAreaLayoutGuide`)
 - [ ] Colors use `SwiftHEXColors` and `Hue` helpers — no custom hex extension or `AppColor` enum
@@ -539,7 +564,7 @@ Before finishing, verify:
 - [ ] JSON models use `SwiftyJSON` with `init(json: JSON)`
 - [ ] Popups use `SwiftEntryKit` (no `UIAlertController` unless truly native alert)
 - [ ] All UI created programmatically (no Storyboard/XIB unless asked)
-- [ ] `// MARK:` sections used for code organization
+- [ ] For Swift UIKit output: `// MARK:` sections used for code organization
 - [ ] Spacing values written as inline literals — no `enum Layout`
 - [ ] Bottom sheets use the **exact** `EKAttributes` config from the Bottom Sheet section (never `EKAttributes.bottomFloat`)
 - [ ] Bottom sheet popup view sets `entryBackground = .clear` and draws its own background
