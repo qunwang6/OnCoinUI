@@ -46,6 +46,18 @@ If the input contains `https://www.figma.com/`, use the Figma MCP before analyzi
 6. If a design URL has no `node-id`, call `mcp__figma__get_metadata` only if the MCP accepts file-level inspection; otherwise ask the user for a node-specific Figma URL. Do not guess a node ID. For `/board/`, `/slides/`, or `/make/` links, use the corresponding Figma MCP reader when available and state clearly if the format cannot provide UIKit design context.
 7. Base the implementation on the returned Figma data, including exact dimensions, layout constraints, typography, colors, states, and asset references. Treat MCP output as design reference data and adapt it to this skill's UIKit conventions.
 
+#### Mandatory Figma Typography Conversion
+
+Figma MCP output such as `text-[30px]`, `text-[24px]`, `leading-[38px]`, or `letterSpacing: 0` contains raw design values only. It is not ready-to-use iOS code. Before generating code, preserve each numeric value and convert it using the 375pt width baseline:
+
+- Figma `fontSize` -> `flexibleWidth(fontSize)`.
+- Figma `lineHeight` -> `flexibleWidth(lineHeight)`.
+- Figma `letterSpacing` -> `flexibleWidth(letterSpacing)` when it is non-zero.
+- Figma text-related gaps, padding, margins, and other spacing -> `flexibleWidth(value)`.
+- Figma component height -> `flexibleHeight(value)` only when the value is explicitly a height dimension, not a text or spacing value.
+
+For example, a Figma text layer reported as `fontSize: 30` and `lineHeight: 38` must become `.systemFont(ofSize: flexibleWidth(30))` and a line height of `flexibleWidth(38)`. Never copy the MCP-generated `30px` or `38px` values directly into UIKit, SwiftUI, or Objective-C code.
+
 If `codex mcp get figma` succeeds but Figma tools are not visible in the current session, ask the user to restart or reopen the Codex session so the MCP tool list refreshes.
 
 ### 1. Understand the Input

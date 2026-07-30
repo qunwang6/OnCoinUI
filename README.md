@@ -187,6 +187,8 @@ Use the project's existing `CommonSize.swift` helpers for every Figma-derived fo
 
 CommonSize source: `/Users/qun/Downloads/aaaaa/OnCoin/SeeCoin/CommonUI/CommonSize/CommonSize.swift`.
 
+Figma MCP typography values are raw design values and must be converted before use. For example, `text-[30px]` and `leading-[38px]` become `flexibleWidth(30)` and `flexibleWidth(38)`. Apply the same 375pt width conversion to `fontSize`, `lineHeight`, non-zero `letterSpacing`, and all text-related spacing. Never copy `30px`, `38px`, or other MCP output values directly into generated iOS code.
+
 ```swift
 // ✅ Correct — inline literals
 titleLabel.snp.makeConstraints { make in
