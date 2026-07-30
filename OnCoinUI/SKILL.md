@@ -121,23 +121,51 @@ This section applies only when the selected implementation is Swift UIKit. Do no
 - Always call `setupUI()` and `setupConstraints()` from `viewDidLoad` (or `init` for UIView)
 - Add subviews in `setupUI()`, define constraints in `setupConstraints()`
 - Never use `frame` or `autoresizingMask` — SnapKit only
-- Write spacing values directly as literals in SnapKit constraints — do NOT define `enum Layout` or extract values to named constants.
+- Keep every Figma value as an inline literal passed through the appropriate `CommonSize` helper. Do not use raw layout numbers in generated UI code.
+- Do NOT define `enum Layout` or extract Figma spacing values to named constants. The literal must remain visible so it can be checked against Figma.
 
 ```swift
 // ✅ Correct SnapKit usage
 private func setupConstraints() {
     titleLabel.snp.makeConstraints { make in
-        make.top.equalTo(headerView.snp.bottom).offset(16)
-        make.leading.trailing.equalToSuperview().inset(16)
+        make.top.equalTo(headerView.snp.bottom).offset(flexibleWidth(16))
+        make.leading.trailing.equalToSuperview().inset(flexibleWidth(16))
     }
     
     confirmButton.snp.makeConstraints { make in
-        make.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
-        make.leading.trailing.equalToSuperview().inset(16)
-        make.height.equalTo(50)
+        make.bottom.equalTo(view.safeAreaLayoutGuide).inset(flexibleWidth(16))
+        make.leading.trailing.equalToSuperview().inset(flexibleWidth(16))
+        make.height.equalTo(flexibleHeight(50))
     }
 }
 ```
+
+### Figma Dimensions and CommonSize Adaptation (Required)
+
+Typography and layout must follow the Figma measurements exactly. Treat Figma as the design source of truth: keep the original value in the call and adapt it only at the point where it is used.
+
+Use the project's existing `CommonSize.swift` at `/Users/qun/Downloads/aaaaa/OnCoin/SeeCoin/CommonUI/CommonSize/CommonSize.swift`. Do not create another scaling helper, use a custom screen-width ratio, or use `UIScreen` directly in generated screen code.
+
+- Use `flexibleWidth(_:)` for all Figma font sizes and spacing values, including vertical and horizontal padding, margins, and gaps. These values must always be calculated from the 375pt design width.
+- Use `flexibleHeight(_:)` only for Figma component heights or other dimensions explicitly defined by the 812pt design height; never use it for font sizes or spacing.
+- Use `horizontalFlexibleWidth(_:)` only when the design value is explicitly based on the 812pt horizontal coordinate system.
+- Use `getStatusBarHeight()`, `getTabBarHeight()`, and `getBottomSafeAreaInsetHeight()` for system UI and safe-area-dependent dimensions.
+- Use these helpers for Swift UIKit, SwiftUI, and Objective-C output whenever the target project exposes the global functions. Preserve the same Figma source value across implementations.
+- Do not scale localized text by changing the Figma font size per language. Keep the adapted Figma font size, then use text wrapping, compression resistance, and intrinsic sizing for longer translations.
+
+```swift
+// Figma: 16pt font, 24pt horizontal inset, 12pt vertical gap, 48pt button height.
+titleLabel.font = .systemFont(ofSize: flexibleWidth(16), weight: .semibold)
+titleLabel.snp.makeConstraints { make in
+    make.leading.trailing.equalToSuperview().inset(flexibleWidth(24))
+    make.bottom.equalTo(subtitleLabel.snp.top).offset(-flexibleWidth(12))
+}
+button.snp.makeConstraints { make in
+    make.height.equalTo(flexibleHeight(48))
+}
+```
+
+Never write the equivalent values as `.systemFont(ofSize: 16)`, `.inset(24)`, `.offset(-12)`, or `.height.equalTo(48)` in generated screen code. Verify both the Figma source literals and helper choice during static review.
 
 ---
 
@@ -466,20 +494,25 @@ final class ProductCell: UITableViewCell {
     
     private func setupConstraints() {
         containerView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+            make.edges.equalToSuperview().inset(UIEdgeInsets(
+                top: flexibleWidth(8),
+                left: flexibleWidth(16),
+                bottom: flexibleWidth(8),
+                right: flexibleWidth(16)
+            ))
         }
         thumbImageView.snp.makeConstraints { make in
             make.leading.top.bottom.equalToSuperview()
-            make.width.height.equalTo(80)
+            make.width.height.equalTo(flexibleWidth(80))
         }
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(12)
-            make.leading.equalTo(thumbImageView.snp.trailing).offset(12)
-            make.trailing.equalToSuperview().inset(12)
+            make.top.equalToSuperview().offset(flexibleWidth(12))
+            make.leading.equalTo(thumbImageView.snp.trailing).offset(flexibleWidth(12))
+            make.trailing.equalToSuperview().inset(flexibleWidth(12))
         }
         priceLabel.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(12)
-            make.leading.equalTo(thumbImageView.snp.trailing).offset(12)
+            make.bottom.equalToSuperview().inset(flexibleWidth(12))
+            make.leading.equalTo(thumbImageView.snp.trailing).offset(flexibleWidth(12))
         }
     }
     

@@ -178,20 +178,26 @@ Call `updateGradientFrame()` after Auto Layout, such as from `viewDidLayoutSubvi
 
 ### Layout Spacing
 
-Write spacing values **as inline literals** in SnapKit constraints — do NOT define an `enum Layout`.
+Use the project's existing `CommonSize.swift` helpers for every Figma-derived font size, spacing, padding, size, and radius. Keep the Figma source value as an inline literal so it remains auditable; do not use raw numbers in generated screen code, and do NOT define an `enum Layout`.
+
+- `flexibleWidth(_:)`: all Figma font sizes and spacing values, including vertical and horizontal padding, margins, and gaps, calculated from the 375pt design width.
+- `flexibleHeight(_:)`: component heights or other dimensions explicitly defined by the 812pt design height; never use it for font sizes or spacing.
+- `horizontalFlexibleWidth(_:)`: values explicitly measured on the 812pt horizontal coordinate system.
+- `getStatusBarHeight()`, `getTabBarHeight()`, and `getBottomSafeAreaInsetHeight()`: system and safe-area dimensions.
+
+CommonSize source: `/Users/qun/Downloads/aaaaa/OnCoin/SeeCoin/CommonUI/CommonSize/CommonSize.swift`.
 
 ```swift
 // ✅ Correct — inline literals
 titleLabel.snp.makeConstraints { make in
-    make.top.equalToSuperview().offset(26)
-    make.leading.trailing.equalToSuperview().inset(30)
+    make.top.equalToSuperview().offset(flexibleWidth(26))
+    make.leading.trailing.equalToSuperview().inset(flexibleWidth(30))
 }
+titleLabel.font = .systemFont(ofSize: flexibleWidth(16), weight: .semibold)
 
-// ❌ Forbidden — no enum Layout
-enum Layout {
-    static let sideInset: CGFloat = 30
-}
-make.leading.trailing.equalToSuperview().inset(Layout.sideInset)
+// ❌ Forbidden — raw Figma numbers or a second scaling system
+make.leading.trailing.equalToSuperview().inset(30)
+titleLabel.font = .systemFont(ofSize: 16)
 ```
 
 ### Localization
