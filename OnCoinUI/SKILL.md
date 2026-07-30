@@ -48,15 +48,16 @@ If the input contains `https://www.figma.com/`, use the Figma MCP before analyzi
 
 #### Mandatory Figma Typography Conversion
 
-Figma MCP output such as `text-[30px]`, `text-[24px]`, `leading-[38px]`, or `letterSpacing: 0` contains raw design values only. It is not ready-to-use iOS code. Before generating code, preserve each numeric value and convert it using the 375pt width baseline:
+Figma MCP output such as `text-[30px]`, `text-[24px]`, `leading-[38px]`, or `letterSpacing: 0` contains raw design values only. It is not ready-to-use iOS code. First read the actual width of the Figma design frame that contains the text, then calculate the final value for the 375pt design width:
 
-- Figma `fontSize` -> `flexibleWidth(fontSize)`.
-- Figma `lineHeight` -> `flexibleWidth(lineHeight)`.
-- Figma `letterSpacing` -> `flexibleWidth(letterSpacing)` when it is non-zero.
-- Figma text-related gaps, padding, margins, and other spacing -> `flexibleWidth(value)`.
-- Figma component height -> `flexibleHeight(value)` only when the value is explicitly a height dimension, not a text or spacing value.
+`normalizedValue = figmaValue * 375 / figmaDesignFrameWidth`
 
-For example, a Figma text layer reported as `fontSize: 30` and `lineHeight: 38` must become `.systemFont(ofSize: flexibleWidth(30))` and a line height of `flexibleWidth(38)`. Never copy the MCP-generated `30px` or `38px` values directly into UIKit, SwiftUI, or Objective-C code.
+- Apply this calculation to Figma `fontSize`, `lineHeight`, and non-zero `letterSpacing`.
+- Write the calculated numeric result directly into the generated code. Do not wrap font values with `flexibleWidth`, `flexibleHeight`, or another scaling helper.
+- Apply `flexibleWidth(value)` to Figma text-related gaps, padding, margins, and other spacing values after preserving their original design values.
+- Apply `flexibleHeight(value)` only to component heights or other dimensions explicitly defined by the 812pt design height.
+
+For example, if the Figma frame width is `750` and the text layer reports `fontSize: 30` and `lineHeight: 38`, calculate `15` and `19`, then generate `.systemFont(ofSize: 15)` with a line height of `19`. Never copy the raw MCP-generated values directly into UIKit, SwiftUI, or Objective-C code.
 
 If `codex mcp get figma` succeeds but Figma tools are not visible in the current session, ask the user to restart or reopen the Codex session so the MCP tool list refreshes.
 
@@ -158,16 +159,17 @@ Typography and layout must follow the Figma measurements exactly. Treat Figma as
 
 Use the project's existing `CommonSize.swift` at `/Users/qun/Downloads/aaaaa/OnCoin/SeeCoin/CommonUI/CommonSize/CommonSize.swift`. Do not create another scaling helper, use a custom screen-width ratio, or use `UIScreen` directly in generated screen code.
 
-- Use `flexibleWidth(_:)` for all Figma font sizes and spacing values, including vertical and horizontal padding, margins, and gaps. These values must always be calculated from the 375pt design width.
-- Use `flexibleHeight(_:)` only for Figma component heights or other dimensions explicitly defined by the 812pt design height; never use it for font sizes or spacing.
+- Calculate all Figma font sizes from the actual design frame width using `figmaValue * 375 / figmaDesignFrameWidth`, then write the resulting number directly. Do not use a font scaling helper in generated code.
+- Use `flexibleWidth(_:)` for all Figma spacing values, including vertical and horizontal padding, margins, and gaps. These values must always be calculated from the 375pt design width.
+- Use `flexibleHeight(_:)` only for Figma component heights or other dimensions explicitly defined by the 812pt design height.
 - Use `horizontalFlexibleWidth(_:)` only when the design value is explicitly based on the 812pt horizontal coordinate system.
 - Use `getStatusBarHeight()`, `getTabBarHeight()`, and `getBottomSafeAreaInsetHeight()` for system UI and safe-area-dependent dimensions.
 - Use these helpers for Swift UIKit, SwiftUI, and Objective-C output whenever the target project exposes the global functions. Preserve the same Figma source value across implementations.
 - Do not scale localized text by changing the Figma font size per language. Keep the adapted Figma font size, then use text wrapping, compression resistance, and intrinsic sizing for longer translations.
 
 ```swift
-// Figma: 16pt font, 24pt horizontal inset, 12pt vertical gap, 48pt button height.
-titleLabel.font = .systemFont(ofSize: flexibleWidth(16), weight: .semibold)
+// Figma font result after normalization: 16pt. Spacing remains CommonSize-adapted.
+titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
 titleLabel.snp.makeConstraints { make in
     make.leading.trailing.equalToSuperview().inset(flexibleWidth(24))
     make.bottom.equalTo(subtitleLabel.snp.top).offset(-flexibleWidth(12))

@@ -178,16 +178,17 @@ Call `updateGradientFrame()` after Auto Layout, such as from `viewDidLayoutSubvi
 
 ### Layout Spacing
 
-Use the project's existing `CommonSize.swift` helpers for every Figma-derived font size, spacing, padding, size, and radius. Keep the Figma source value as an inline literal so it remains auditable; do not use raw numbers in generated screen code, and do NOT define an `enum Layout`.
+Use the project's existing `CommonSize.swift` helpers for Figma-derived spacing, padding, size, and radius. Font sizes must be normalized from the actual Figma design frame width before code generation. Keep the Figma source value and calculation auditable, and do NOT define an `enum Layout`.
 
-- `flexibleWidth(_:)`: all Figma font sizes and spacing values, including vertical and horizontal padding, margins, and gaps, calculated from the 375pt design width.
-- `flexibleHeight(_:)`: component heights or other dimensions explicitly defined by the 812pt design height; never use it for font sizes or spacing.
+- Font size, line height, and non-zero letter spacing: calculate `figmaValue * 375 / figmaDesignFrameWidth`, then write the numeric result directly. Do not use a font scaling helper.
+- `flexibleWidth(_:)`: all Figma spacing values, including vertical and horizontal padding, margins, and gaps, calculated from the 375pt design width.
+- `flexibleHeight(_:)`: component heights or other dimensions explicitly defined by the 812pt design height.
 - `horizontalFlexibleWidth(_:)`: values explicitly measured on the 812pt horizontal coordinate system.
 - `getStatusBarHeight()`, `getTabBarHeight()`, and `getBottomSafeAreaInsetHeight()`: system and safe-area dimensions.
 
 CommonSize source: `/Users/qun/Downloads/aaaaa/OnCoin/SeeCoin/CommonUI/CommonSize/CommonSize.swift`.
 
-Figma MCP typography values are raw design values and must be converted before use. For example, `text-[30px]` and `leading-[38px]` become `flexibleWidth(30)` and `flexibleWidth(38)`. Apply the same 375pt width conversion to `fontSize`, `lineHeight`, non-zero `letterSpacing`, and all text-related spacing. Never copy `30px`, `38px`, or other MCP output values directly into generated iOS code.
+Figma MCP typography values are raw design values and must be normalized before use. For example, with a Figma design frame width of `750`, `text-[30px]` and `leading-[38px]` become `15` and `19` using `figmaValue * 375 / figmaDesignFrameWidth`. Write those numeric results directly; never use `flexibleWidth` for font values or copy raw MCP output values directly into generated iOS code.
 
 ```swift
 // ✅ Correct — inline literals
@@ -195,7 +196,7 @@ titleLabel.snp.makeConstraints { make in
     make.top.equalToSuperview().offset(flexibleWidth(26))
     make.leading.trailing.equalToSuperview().inset(flexibleWidth(30))
 }
-titleLabel.font = .systemFont(ofSize: flexibleWidth(16), weight: .semibold)
+titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
 
 // ❌ Forbidden — raw Figma numbers or a second scaling system
 make.leading.trailing.equalToSuperview().inset(30)
