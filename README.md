@@ -12,6 +12,7 @@
 - 🎨 **Colors**: `SwiftHEXColors` and `Hue` helpers — no custom hex extension or `AppColor` enum
 - 🌈 **Gradients**: Prefer the project's `UIView+Gradient.swift` APIs for `UIView` and `UIButton` backgrounds
 - 🖼️ **Kingfisher image loading**: Placeholder, fade animation, cell reuse cancellation
+- 📦 **Figma PNG scales**: Build correctly mapped iOS `1x` / `2x` / `3x` image sets from the page's actual rendered size
 - 📦 **SwiftyJSON models**: Unified `init(json: JSON)` parsing pattern
 - 🌐 **Localization**: `SCLanguageManager` with auto-output in the project's 14 supported languages
 
@@ -202,6 +203,33 @@ titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
 make.leading.trailing.equalToSuperview().inset(30)
 titleLabel.font = .systemFont(ofSize: 16)
 ```
+
+### Figma PNG Assets
+
+Use the image's final rendered size on the iOS page as its `1x` logical size. Normalize a Figma node to the 375pt design width before creating bitmap variants:
+
+```text
+displayWidthPt  = figmaNodeWidth  × 375 / figmaDesignFrameWidth
+displayHeightPt = figmaNodeHeight × 375 / figmaDesignFrameWidth
+
+1x pixels = display size × 1
+2x pixels = display size × 2
+3x pixels = display size × 3
+```
+
+Example: a `120 × 80` node in a `750`-wide Figma frame displays at `60 × 40pt`. Create `60 × 40px`, `120 × 80px`, and `180 × 120px` PNGs and assign them to the `1x`, `2x`, and `3x` slots respectively.
+
+Store all variants in one `.imageset`:
+
+```text
+example_banner.imageset/
+├── example_banner.png       # 1x
+├── example_banner@2x.png    # 2x
+├── example_banner@3x.png    # 3x
+└── Contents.json            # explicit scale mapping
+```
+
+Figma export scale is relative to the source node. It can differ from the target iOS scale. Generate variants from the highest-resolution source, verify their actual pixel dimensions, keep their crop identical, and reference only the base asset name in code: `UIImage(named: "example_banner")`.
 
 ### Localization
 

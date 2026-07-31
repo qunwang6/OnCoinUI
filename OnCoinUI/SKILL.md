@@ -1,6 +1,6 @@
 ---
 name: oncoinui
-description: "Build iOS UI screens from design specs, mockups, screenshots, Figma links, or descriptions. Match the implementation language to the current page: SwiftUI for SwiftUI pages, Objective-C for Objective-C pages, and Swift with SnapKit for all other pages. Use this skill whenever the user wants to create, implement, or recreate an iOS interface, view controller, custom view, table/collection view, popup, alert, or navigation flow."
+description: "Build iOS UI screens and organize Figma PNG assets from design specs, mockups, screenshots, Figma links, or descriptions. Match the implementation language to the current page: SwiftUI for SwiftUI pages, Objective-C for Objective-C pages, and Swift with SnapKit for all other pages. Use this skill whenever the user wants to create, implement, or recreate an iOS interface, view controller, custom view, table/collection view, popup, alert, navigation flow, or correctly map downloaded PNG resources to iOS 1x/2x/3x image scales."
 ---
 
 # OnCoinUI
@@ -45,6 +45,7 @@ If the input contains `https://www.figma.com/`, use the Figma MCP before analyzi
 5. For a design URL with `node-id`, load the Figma design-to-code guidance, then call `mcp__figma__get_design_context` with the extracted `fileKey` and `nodeId`. Also call `mcp__figma__get_screenshot` when visual comparison is needed, `mcp__figma__get_metadata` for hierarchy/IDs, and `mcp__figma__download_assets` for images or vectors used by the design.
 6. If a design URL has no `node-id`, call `mcp__figma__get_metadata` only if the MCP accepts file-level inspection; otherwise ask the user for a node-specific Figma URL. Do not guess a node ID. For `/board/`, `/slides/`, or `/make/` links, use the corresponding Figma MCP reader when available and state clearly if the format cannot provide UIKit design context.
 7. Base the implementation on the returned Figma data, including exact dimensions, layout constraints, typography, colors, states, and asset references. Treat MCP output as design reference data and adapt it to this skill's UIKit conventions.
+8. For every downloaded PNG used as a local iOS asset, follow the mandatory `1x/2x/3x` workflow below. Do not map scale slots from the downloaded file names or Figma export labels alone.
 
 #### Mandatory Figma Typography Conversion
 
@@ -60,6 +61,66 @@ Figma MCP output such as `text-[30px]`, `text-[24px]`, `leading-[38px]`, or `let
 For example, if the Figma frame width is `750` and the text layer reports `fontSize: 30` and `lineHeight: 38`, calculate `15` and `19`, then generate `.systemFont(ofSize: 15)` with a line height of `19`. Never copy the raw MCP-generated values directly into UIKit, SwiftUI, or Objective-C code.
 
 If `codex mcp get figma` succeeds but Figma tools are not visible in the current session, ask the user to restart or reopen the Codex session so the MCP tool list refreshes.
+
+#### Mandatory Figma PNG 1x/2x/3x Mapping
+
+Treat the image's actual rendered size on the implemented iOS page as the `1x` logical size. Do not treat the Figma node's raw pixel dimensions, the downloaded PNG dimensions, or a Figma export label as the iOS `1x` size.
+
+1. Read the Figma node bounds and the containing design frame width.
+2. Determine the image view's final on-page size in points. When the design frame is not already 375pt wide, normalize both image dimensions with the same width ratio:
+
+   `displayWidthPt = figmaNodeWidth * 375 / figmaDesignFrameWidth`
+
+   `displayHeightPt = figmaNodeHeight * 375 / figmaDesignFrameWidth`
+
+   If the implementation intentionally uses a different explicit size or crop, use that final rendered size instead.
+3. Generate the PNG variants from one highest-resolution source. Prefer downsampling the master; never upscale a smaller `1x` file to create `2x` or `3x`.
+4. Resize each variant to these exact pixel dimensions:
+
+| iOS scale | Required PNG pixel size |
+|---|---|
+| `1x` | `displayWidthPt × displayHeightPt` |
+| `2x` | `(displayWidthPt × 2) × (displayHeightPt × 2)` |
+| `3x` | `(displayWidthPt × 3) × (displayHeightPt × 3)` |
+
+Use whole pixel dimensions. Prefer whole-point page dimensions; when the final point size is fractional, round each scaled pixel dimension consistently and verify that all variants preserve the same crop and aspect ratio.
+
+Figma export scale is relative to the Figma node, not automatically to the iOS logical size. Calculate it when exporting directly:
+
+`figmaExportScale = targetIOSScale * 375 / figmaDesignFrameWidth`
+
+For example, a `120 × 80` node inside a `750`-wide Figma frame renders as `60 × 40pt`. Its correct files are `60 × 40px` for `1x`, `120 × 80px` for `2x`, and `180 × 120px` for `3x`. Direct Figma export scales are therefore `0.5x`, `1x`, and `1.5x`; the Figma `1x` download belongs in the iOS `2x` slot in this example.
+
+Place each group in one asset catalog image set and map scale metadata explicitly:
+
+```text
+Assets.xcassets/
+└── example_banner.imageset/
+    ├── example_banner.png
+    ├── example_banner@2x.png
+    ├── example_banner@3x.png
+    └── Contents.json
+```
+
+```json
+{
+  "images": [
+    { "filename": "example_banner.png", "idiom": "universal", "scale": "1x" },
+    { "filename": "example_banner@2x.png", "idiom": "universal", "scale": "2x" },
+    { "filename": "example_banner@3x.png", "idiom": "universal", "scale": "3x" }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
+```
+
+- Keep content, crop, transparency, and aspect ratio identical across all three files.
+- Use a filesystem-safe lowercase snake_case base name unless the target asset catalog already follows another convention.
+- Reference the image by its asset name, such as `UIImage(named: "example_banner")`; never include `@2x`, `@3x`, or `.png` in code.
+- Inspect the actual pixel dimensions after export or resize. Do not finish with a missing slot, duplicated pixels under different scale labels, or a `2x`/`3x` file assigned to the wrong `Contents.json` scale.
+- Do not synthesize bitmap variants for a resource that should remain vector/PDF unless the user or target project specifically requires PNG.
 
 ### 1. Understand the Input
 The user may provide one of the following — adapt accordingly:
@@ -603,6 +664,10 @@ Before finishing, verify:
 - [ ] A SwiftUI or Objective-C page was not migrated to UIKit/Swift solely for this UI work
 - [ ] For Swift UIKit output: no `frame` / `AutoresizingMask` usage — SnapKit only
 - [ ] Code generation does not trigger automatic compilation or app execution unless explicitly requested
+- [ ] Every downloaded local PNG uses the implemented page size in points as its `1x` logical size
+- [ ] PNG pixel dimensions equal the page size multiplied by `1`, `2`, and `3`; variants come from a high-resolution master
+- [ ] Each `.imageset/Contents.json` maps the matching files explicitly to `1x`, `2x`, and `3x`
+- [ ] Asset references use the base asset name without `@2x`, `@3x`, or `.png`
 - [ ] Safe area insets handled (`safeAreaLayoutGuide`)
 - [ ] Colors use `SwiftHEXColors` and `Hue` helpers — no custom hex extension or `AppColor` enum
 - [ ] `UIView` and `UIButton` gradients prefer the existing `UIView+Gradient.swift` APIs; gradient frames are updated after layout
