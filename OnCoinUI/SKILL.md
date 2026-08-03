@@ -296,6 +296,55 @@ override func viewDidLayoutSubviews() {
 
 For reusable `UIView` or `UIButton` subclasses, call `updateGradientFrame()` from `layoutSubviews()`. Use `removeGradient()` before replacing a gradient, and do not add a second gradient layer for the same view. Set a button's `backgroundColor` to `.clear` so it does not cover the gradient. Only use a custom `CAGradientLayer` when the existing extension cannot express the required behavior, and explain why.
 
+### Transparent Glass — UIView+SCLiquidGlass
+
+When the target SeeCoin project includes `CommonUI/SCLiquidGlass/UIView+SCLiquidGlass.h` and `.m`, use this existing category for transparent glass or frosted surfaces. Do not create another `UIVisualEffectView` wrapper or hand-roll a blur layer. The category installs a bottom-layer backdrop, tracks the host view's bounds during `layoutSubviews`, and preserves/restores the host background color.
+
+Choose the effect according to the design requirement:
+
+- Use `sc_liquidGlassEnabled = YES` for the adaptive glass treatment. On iOS 26 and later it uses `UIGlassEffect`; on earlier systems it falls back to the configured `UIBlurEffectStyle`.
+- Use `sc_frostedBlurEnabled = YES` when the design requires consistent `UIBlurEffect` behavior on every supported iOS version.
+- These two modes are mutually exclusive. Do not enable both on one view.
+- Set `sc_liquidGlassCornerRadius` or `sc_frostedBlurCornerRadius` only when the design specifies an explicit radius. Otherwise the category follows `layer.cornerRadius`, then falls back to a pill/circle radius based on the host bounds.
+- For a `UIButton` host, call `UIView.sc_applyTransparentStyleForGlassHostButton(_:)` after creating/configuring the button so the button's own background does not cover the backdrop. The category also applies this during installation, but keeping the explicit call makes the intended transparent-button styling clear.
+
+Swift UIKit example (the Objective-C category must be exposed through the target's bridging header):
+
+```swift
+import UIKit
+
+private func configureGlassCard() {
+    glassCard.backgroundColor = .clear
+    glassCard.layer.cornerRadius = flexibleWidth(20)
+    glassCard.sc_liquidGlassBlurEffectStyle = .systemMaterialDark
+    glassCard.sc_liquidGlassEnabled = true
+}
+
+private func configureGlassButton() {
+    actionButton.backgroundColor = .clear
+    UIView.sc_applyTransparentStyleForGlassHostButton(actionButton)
+    actionButton.sc_frostedBlurEffectStyle = .systemMaterialDark
+    actionButton.sc_frostedBlurCornerRadius = flexibleWidth(24)
+    actionButton.sc_frostedBlurEnabled = true
+}
+```
+
+Objective-C example:
+
+```objc
+#import "UIView+SCLiquidGlass.h"
+
+self.glassView.backgroundColor = UIColor.clearColor;
+self.glassView.layer.cornerRadius = 20.0;
+self.glassView.sc_liquidGlassEnabled = YES;
+
+[UIView sc_applyTransparentStyleForGlassHostButton:self.actionButton];
+self.actionButton.sc_frostedBlurCornerRadius = 24.0;
+self.actionButton.sc_frostedBlurEnabled = YES;
+```
+
+Apply glass properties after the host view has been created and before it is displayed. Keep the host's content subviews above the backdrop; the category inserts its `UIVisualEffectView` at index 0. Do not set an opaque background on the host after enabling the effect, and do not replace or reorder the category-managed backdrop. When the target does not contain this category, first add the supplied `UIView+SCLiquidGlass.h/.m` files to the app target and ensure their existing `DefineUI.h` and Masonry dependencies are available before using these APIs.
+
 ---
 
 ### Image Loading with Kingfisher
@@ -671,6 +720,7 @@ Before finishing, verify:
 - [ ] Safe area insets handled (`safeAreaLayoutGuide`)
 - [ ] Colors use `SwiftHEXColors` and `Hue` helpers — no custom hex extension or `AppColor` enum
 - [ ] `UIView` and `UIButton` gradients prefer the existing `UIView+Gradient.swift` APIs; gradient frames are updated after layout
+- [ ] Transparent glass uses the existing `UIView+SCLiquidGlass` category; glass modes are not enabled simultaneously and glass hosts/buttons remain transparent
 - [ ] Images use `kf.setImage` with placeholder
 - [ ] `prepareForReuse` cancels Kingfisher tasks in cells
 - [ ] JSON models use `SwiftyJSON` with `init(json: JSON)`
