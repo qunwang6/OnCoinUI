@@ -460,6 +460,18 @@ When generating any UI text, you must also output the corresponding localization
 
 ### SwiftEntryKit — Popups & Toasts
 
+When a SwiftEntryKit popup needs a dimmed screen background, configure it through
+`EKAttributes.screenBackground`. Never set a popup or overlay view with
+`backgroundColor = UIColor.black.withAlphaComponent(...)` to create the dimming layer.
+Use this exact light/dark configuration:
+
+```swift
+attributes.screenBackground = .color(color: .init(
+    light: UIColor(white: 0, alpha: 0.5),
+    dark: UIColor(white: 0, alpha: 0.5)
+))
+```
+
 #### Toast / Snackbar
 ```swift
 func showToast(message: String, isSuccess: Bool = true) {
@@ -481,6 +493,10 @@ func showToast(message: String, isSuccess: Bool = true) {
 ```swift
 func showAlertPopup(title: String, message: String, confirmAction: @escaping () -> Void) {
     var attributes = EKAttributes.centerFloat
+    attributes.screenBackground = .color(color: .init(
+        light: UIColor(white: 0, alpha: 0.5),
+        dark: UIColor(white: 0, alpha: 0.5)
+    ))
     attributes.entryBackground = .color(color: EKColor(.white))
     attributes.roundCorners = .all(radius: 16)
     attributes.shadow = .active(with: .init(color: .black, opacity: 0.15, radius: 10))
@@ -509,8 +525,8 @@ func showBottomSheet(popupView: UIView) {
     attributes.displayDuration = .infinity
     attributes.screenBackground = .color(
         color: .init(
-            light: UIColor(white: 0, alpha: 0.4),
-            dark:  UIColor(white: 0, alpha: 0.4)
+            light: UIColor(white: 0, alpha: 0.5),
+            dark:  UIColor(white: 0, alpha: 0.5)
         )
     )
     attributes.entryBackground = .clear           // popup view draws its own background
@@ -725,6 +741,7 @@ Before finishing, verify:
 - [ ] `prepareForReuse` cancels Kingfisher tasks in cells
 - [ ] JSON models use `SwiftyJSON` with `init(json: JSON)`
 - [ ] Popups use `SwiftEntryKit` (no `UIAlertController` unless truly native alert)
+- [ ] SwiftEntryKit dimming backgrounds use `attributes.screenBackground` with light/dark alpha `0.5`; no popup or overlay view uses `backgroundColor = UIColor.black.withAlphaComponent(...)`
 - [ ] All UI created programmatically (no Storyboard/XIB unless asked)
 - [ ] For Swift UIKit output: `// MARK:` sections used for code organization
 - [ ] Spacing values written as inline literals — no `enum Layout`

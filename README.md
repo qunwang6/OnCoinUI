@@ -250,13 +250,17 @@ Output all 14 translation files alongside every generated UI file:
 
 ### Bottom Sheet (Fixed Config)
 
+For every SwiftEntryKit popup that needs a dimmed screen background, configure the
+dimming through `EKAttributes.screenBackground`. Do not set a popup or overlay view's
+`backgroundColor = UIColor.black.withAlphaComponent(...)`.
+
 ```swift
 var attributes = EKAttributes()
 attributes.position = .bottom
 attributes.displayDuration = .infinity
 attributes.screenBackground = .color(
-    color: .init(light: UIColor(white: 0, alpha: 0.4),
-                 dark:  UIColor(white: 0, alpha: 0.4))
+    color: .init(light: UIColor(white: 0, alpha: 0.5),
+                 dark:  UIColor(white: 0, alpha: 0.5))
 )
 attributes.entryBackground = .clear
 attributes.screenInteraction = .dismiss
