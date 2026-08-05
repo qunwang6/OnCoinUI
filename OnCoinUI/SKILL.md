@@ -460,8 +460,25 @@ When generating any UI text, you must also output the corresponding localization
 
 ### SwiftEntryKit — Popups & Toasts
 
-When a SwiftEntryKit popup needs a dimmed screen background, configure it through
-`EKAttributes.screenBackground`. Never set a popup or overlay view with
+Before implementing a SwiftEntryKit popup, ask whether it needs a Gaussian-blur backdrop. Do this whenever the design or request does not explicitly settle the backdrop treatment; do not silently choose one. If no backdrop is wanted, make the screen background clear.
+
+For a Gaussian-blur backdrop, use the existing `SCPopupBackdrop` mechanism and this attribute configuration exactly. Do not replace it with `EKAttributes.screenBackground`, a custom black overlay, or an ad hoc `UIVisualEffectView`.
+
+```swift
+attributes.precedence = .enqueue(priority: .normal)
+attributes.displayDuration = .infinity
+SCPopupBackdrop.apply(to: &attributes)
+attributes.screenInteraction = .absorbTouches
+attributes.entryInteraction = .absorbTouches
+attributes.shadow = .none
+attributes.positionConstraints.size = .screen
+attributes.positionConstraints.safeArea = .overridden
+attributes.positionConstraints.verticalOffset = 0
+attributes.lifecycleEvents.didDisappear = dismissHandler
+```
+
+For an explicitly requested ordinary dimmed backdrop, configure it through
+`EKAttributes.screenBackground`; never set a popup or overlay view with
 `backgroundColor = UIColor.black.withAlphaComponent(...)` to create the dimming layer.
 Use this exact light/dark configuration:
 
@@ -741,7 +758,9 @@ Before finishing, verify:
 - [ ] `prepareForReuse` cancels Kingfisher tasks in cells
 - [ ] JSON models use `SwiftyJSON` with `init(json: JSON)`
 - [ ] Popups use `SwiftEntryKit` (no `UIAlertController` unless truly native alert)
-- [ ] SwiftEntryKit dimming backgrounds use `attributes.screenBackground` with light/dark alpha `0.5`; no popup or overlay view uses `backgroundColor = UIColor.black.withAlphaComponent(...)`
+- [ ] Every SwiftEntryKit popup has an explicitly chosen backdrop treatment; request clarification when the design does not specify one
+- [ ] Gaussian-blur backdrops use `SCPopupBackdrop.apply(to: &attributes)` with the required full-screen, touch-absorbing attribute configuration
+- [ ] Ordinary dimmed backdrops use `attributes.screenBackground` with light/dark alpha `0.5`; no popup or overlay view uses `backgroundColor = UIColor.black.withAlphaComponent(...)`
 - [ ] All UI created programmatically (no Storyboard/XIB unless asked)
 - [ ] For Swift UIKit output: `// MARK:` sections used for code organization
 - [ ] Spacing values written as inline literals — no `enum Layout`
