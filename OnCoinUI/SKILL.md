@@ -725,6 +725,56 @@ private func setupNavigationBar() {
 
 ---
 
+## Navigation Bar + ScrollView Interaction
+
+When a UIKit `UIScrollView` extends beneath a transparent custom navigation bar, content must be clear before it reaches the navigation area and gain the navigation blur progressively only while scrolling upward.
+
+Required behavior:
+
+- Initial state (`contentOffset.y <= 0`): no blur.
+- Upward scrolling: fade the blur in according to scroll distance.
+- Pulling down: clamp progress to zero so the blur disappears.
+- Place the blur overlay above the scroll view and below the navigation controls so it cannot intercept touches.
+- If the public view controller conforms to the public `UIScrollViewDelegate` protocol, declare `scrollViewDidScroll` as `public`.
+- Set `contentInsetAdjustmentBehavior = .never` when exact content-to-navigation spacing is required; otherwise UIKit safe-area adjustment can add an unexpected offset.
+
+For UIKit pages, reuse the project's `SCDirectionalFadeBlurOverlayView` and `SCScrollGradientNavigationBarProgress` instead of creating another blur implementation:
+
+```swift
+private let navigationBlurOverlay = SCDirectionalFadeBlurOverlayView(
+    opaqueEdge: .top,
+    showsDimTint: true,
+    midLocation: 0.55,
+    dimPeakOpacity: 0.7
+)
+
+private func setupNavigationBlurOverlay() {
+    view.addSubview(navigationBlurOverlay)
+    navigationBlurOverlay.alpha = 0
+    navigationBlurOverlay.snp.makeConstraints { make in
+        make.top.leading.trailing.equalToSuperview()
+        make.height.equalTo(getStatusBarHeight() + flexibleWidth(44) + flexibleWidth(20))
+    }
+}
+
+private func configureScrollView() {
+    scrollView.contentInsetAdjustmentBehavior = .never
+    scrollView.contentInset = .zero
+    scrollView.scrollIndicatorInsets = .zero
+    scrollView.delegate = self
+}
+
+public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    let progress = SCScrollGradientNavigationBarProgress.progress(
+        offsetY: max(0, scrollView.contentOffset.y),
+        triggerOffset: flexibleWidth(80)
+    )
+    navigationBlurOverlay.alpha = progress
+}
+```
+
+Add the blur overlay after the scroll view and before the navigation controls. Do not use a permanently opaque navigation background, and do not show the blur at the initial offset. Keep the overlay's height large enough to cover the navigation bar and its fade extension below the bar.
+
 ## Empty State & Loading State
 
 ```swift
