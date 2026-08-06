@@ -256,6 +256,8 @@ dimming through `EKAttributes.screenBackground`. Do not set a popup or overlay v
 
 ```swift
 var attributes = EKAttributes()
+attributes.entranceAnimation = .none
+attributes.exitAnimation = .none
 attributes.position = .bottom
 attributes.displayDuration = .infinity
 attributes.screenBackground = .color(

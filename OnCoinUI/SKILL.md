@@ -462,9 +462,18 @@ When generating any UI text, you must also output the corresponding localization
 
 Before implementing a SwiftEntryKit popup, ask whether it needs a Gaussian-blur backdrop. Do this whenever the design or request does not explicitly settle the backdrop treatment; do not silently choose one. If no backdrop is wanted, make the screen background clear.
 
+Unless a popup explicitly requires an animation, disable both transition animations:
+
+```swift
+attributes.entranceAnimation = .none
+attributes.exitAnimation = .none
+```
+
 For a Gaussian-blur backdrop, use the existing `SCPopupBackdrop` mechanism and this attribute configuration exactly. Do not replace it with `EKAttributes.screenBackground`, a custom black overlay, or an ad hoc `UIVisualEffectView`.
 
 ```swift
+attributes.entranceAnimation = .none
+attributes.exitAnimation = .none
 attributes.precedence = .enqueue(priority: .normal)
 attributes.displayDuration = .infinity
 SCPopupBackdrop.apply(to: &attributes)
@@ -493,6 +502,8 @@ attributes.screenBackground = .color(color: .init(
 ```swift
 func showToast(message: String, isSuccess: Bool = true) {
     var attributes = EKAttributes.topToast
+    attributes.entranceAnimation = .none
+    attributes.exitAnimation = .none
     attributes.entryBackground = .color(color: EKColor(isSuccess ? UIColor(hexString: "#149D93") : .systemRed))
     attributes.displayDuration = 2.5
     attributes.shadow = .active(with: .init(color: .black, opacity: 0.2, radius: 6))
@@ -510,6 +521,8 @@ func showToast(message: String, isSuccess: Bool = true) {
 ```swift
 func showAlertPopup(title: String, message: String, confirmAction: @escaping () -> Void) {
     var attributes = EKAttributes.centerFloat
+    attributes.entranceAnimation = .none
+    attributes.exitAnimation = .none
     attributes.screenBackground = .color(color: .init(
         light: UIColor(white: 0, alpha: 0.5),
         dark: UIColor(white: 0, alpha: 0.5)
@@ -538,6 +551,8 @@ func showAlertPopup(title: String, message: String, confirmAction: @escaping () 
 /// popupView is a UIView subclass that self-sizes via its own constraints (height: .intrinsic).
 func showBottomSheet(popupView: UIView) {
     var attributes = EKAttributes()
+    attributes.entranceAnimation = .none
+    attributes.exitAnimation = .none
     attributes.position = .bottom
     attributes.displayDuration = .infinity
     attributes.screenBackground = .color(
@@ -758,6 +773,7 @@ Before finishing, verify:
 - [ ] `prepareForReuse` cancels Kingfisher tasks in cells
 - [ ] JSON models use `SwiftyJSON` with `init(json: JSON)`
 - [ ] Popups use `SwiftEntryKit` (no `UIAlertController` unless truly native alert)
+- [ ] SwiftEntryKit popups set `entranceAnimation = .none` and `exitAnimation = .none` unless animation is explicitly required
 - [ ] Every SwiftEntryKit popup has an explicitly chosen backdrop treatment; request clarification when the design does not specify one
 - [ ] Gaussian-blur backdrops use `SCPopupBackdrop.apply(to: &attributes)` with the required full-screen, touch-absorbing attribute configuration
 - [ ] Ordinary dimmed backdrops use `attributes.screenBackground` with light/dark alpha `0.5`; no popup or overlay view uses `backgroundColor = UIColor.black.withAlphaComponent(...)`
