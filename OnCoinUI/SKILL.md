@@ -469,6 +469,13 @@ attributes.entranceAnimation = .none
 attributes.exitAnimation = .none
 ```
 
+Unless a popup intentionally contains scrollable content, disable SwiftEntryKit's
+container scrolling:
+
+```swift
+attributes.scroll = .disabled
+```
+
 For a Gaussian-blur backdrop, use the existing `SCPopupBackdrop` mechanism and this attribute configuration exactly. Do not replace it with `EKAttributes.screenBackground`, a custom black overlay, or an ad hoc `UIVisualEffectView`.
 
 ```swift
@@ -479,6 +486,7 @@ attributes.displayDuration = .infinity
 SCPopupBackdrop.apply(to: &attributes)
 attributes.screenInteraction = .absorbTouches
 attributes.entryInteraction = .absorbTouches
+attributes.scroll = .disabled
 attributes.shadow = .none
 attributes.positionConstraints.size = .screen
 attributes.positionConstraints.safeArea = .overridden
@@ -504,6 +512,7 @@ func showToast(message: String, isSuccess: Bool = true) {
     var attributes = EKAttributes.topToast
     attributes.entranceAnimation = .none
     attributes.exitAnimation = .none
+    attributes.scroll = .disabled
     attributes.entryBackground = .color(color: EKColor(isSuccess ? UIColor(hexString: "#149D93") : .systemRed))
     attributes.displayDuration = 2.5
     attributes.shadow = .active(with: .init(color: .black, opacity: 0.2, radius: 6))
@@ -523,6 +532,7 @@ func showAlertPopup(title: String, message: String, confirmAction: @escaping () 
     var attributes = EKAttributes.centerFloat
     attributes.entranceAnimation = .none
     attributes.exitAnimation = .none
+    attributes.scroll = .disabled
     attributes.screenBackground = .color(color: .init(
         light: UIColor(white: 0, alpha: 0.5),
         dark: UIColor(white: 0, alpha: 0.5)
