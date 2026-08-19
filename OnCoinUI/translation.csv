@@ -107,6 +107,8 @@
 直播/预约/回放,直播间/预约直播流程 - 暂无历史消息,,暂无历史消息,暫無歷史訊息,No history messages,Không có tin nhắn lịch sử,لا توجد رسائل في السجل,Sin mensajes del historial,Sem mensagens antigas,Aucun message d'historique,履歴メッセージがありません,과거 메시지 없음,کوئی تاریخی پیغامات نہیں,Tidak ada riwayat pesan,कोई इतिहासिक संदेश नहीं,Нет истории сообщений,Geçmiş mesaj yok,直播核心流程文案，需确认预约、关注、发送等按钮状态切换正常
 直播/预约/回放,直播间/预约直播流程 - 知道了,V1.6,知道了,知道了,Got it,Đã hiểu,حسناً,Entendido,Entendi,Compris,OK,확인,سمجھ گیا,Mengerti,समझ गया,Понятно,Anladım,多场景：直播/预约/回放 · 直播间/预约直播流程 - 知道了；系统提示/弹窗/权限 · 直播间/预约直播流程 - 知道了｜直播核心流程文案，需确认预约、关注、发送等按钮状态切换正常；直播/预约/回放 · U 福袋 - 知道了
 直播/预约/回放,直播间/预约直播流程 - 福袋,,福袋,福袋,Lucky Bag,Túi may mắn,حقيبة الحظ,Bolsa de la suerte,Bolsa da sorte,Sac chanceux,ラッキーバッグ,럭키백,لکی بیگ,Tas Keberuntungan,लकी बैग,Лаки-бег,Şans çantası,多场景：直播/预约/回放 · 直播间/预约直播流程 - 福袋；系统提示/弹窗/权限 · 直播间/预约直播流程 - 福袋｜直播核心流程文案，需确认预约、关注、发送等按钮状态切换正常
+直播/预约/回放,直播间/预约直播流程 - 福袋数量,,福袋数量,福袋數量,Number of Lucky Bags,Số lượng túi may mắn,عدد أكياس الحظ,Número de bolsas de la suerte,Número de sacolas da sorte,Nombre de lucky bags,福袋の数量,럭키백 수량,لکی بیگ کی تعداد,Jumlah lucky bag,लकी बैग की संख्या,Количество счастливых мешков,Lucky bag adedi,直播间福袋数量字段；英文对齐同屏 Number of Participants / Number of winners 口径，用复数 Bags
+直播/预约/回放,直播间/预约直播流程 - 加入粉丝群参与此福袋,,加入粉丝群参与此福袋,加入粉絲群參與此福袋,Join the fan group to participate in this Lucky Bag,Tham gia nhóm fan để tham gia túi may mắn này,انضم إلى مجموعة المعجبين للمشاركة في كيس الحظ هذا,Únete al grupo de fans para participar en esta bolsa de la suerte,Entre no grupo de fãs para participar desta sacola da sorte,Rejoignez le groupe de fans pour participer à ce lucky bag,ファングループに参加してこの福袋に参加,팬 그룹에 가입하여 이 럭키백에 참여하세요,اس لکی بیگ میں شرکت کے لیے فین گروپ میں شامل ہوں,Gabung grup fan untuk ikut lucky bag ini,इस लकी बैग में भाग लेने के लिए फैन समूह से जुड़ें,"Вступите в фан-группу, чтобы участвовать в этом счастливом мешке",Bu lucky bag’e katılmak için hayran grubuna katılın,直播间福袋参与门槛引导文案
 直播/预约/回放,直播间/预约直播流程 - 竞猜,,竞猜,競猜,Prediction,Dự đoán,توقع,Predicción,Previsão,Prédiction,予測,예측,پیش گوئی,Prediksi,भविष्यवाणी,Прогноз,Tahmin,多场景：直播/预约/回放 · 直播间/预约直播流程 - 竞猜；系统提示/弹窗/权限 · 直播间/预约直播流程 - 竞猜｜直播核心流程文案，需确认预约、关注、发送等按钮状态切换正常
 直播/预约/回放,直播间/预约直播流程 - 说点什么,,说点什么...,說點什麼...,Say something...,Nói gì đó...,أرسل تعليقًا,Enviar comentario,Enviar comentario,Envoyer un commentaire,コメントを送信,댓글 보내기,تبصرہ بھیجیں,Kirim komentar,टिप्पणी भेजें,Отправить комментарий,Yorum gonder,直播核心流程文案，需确认预约、关注、发送等按钮状态切换正常
 直播/预约/回放,直播间/预约直播流程 - 进入直播,,进入直播,進入直播,Enter Live,Vào live,ادخل إلى البث,Entrar al en vivo,Entrar na Live,Entrer dans le live,ライブに入る,라이브로 이동,لائیو میں داخل ہوں,Masuk Live,लाइव में प्रवेश करें,Войти в эфир,Canlıya Gir,直播核心流程文案，需确认预约、关注、发送等按钮状态切换正常
@@ -1013,7 +1015,7 @@ Jika ada pertanyaan, hubungi tim dukungan.","नमस्ते,
 Taraflarca imzalanan {{contract_name}} / {{streamer_contract_id}} sözleşmesi {{cancel_time}} itibarıyla geçersiz kılınmış ve sona erdirilmiştir.
 Bu sözleşme artık taraflar için hukuki etki doğurmaz. Verilen rahatsızlık için özür dileriz.
 Sorularınız için destek ekibimize ulaşın.",站内信 notify_type=14；占位符勿译；来源：英文站内信模板.xlsx
-系统提示/弹窗/权限,站内信模板 - 福袋中奖 - 正文,站内信模板,"亲爱的用户，您好！
+系统提示/弹窗/权限,站内信模板 - 常规福袋中奖 - 正文,站内信模板,"亲爱的用户，您好！
 
 你参与的场次【{{streamer_nickname}} · {{live_start_time}}】福袋已开奖。恭喜你中奖！
 
@@ -1179,6 +1181,172 @@ Katıldığınız 【{{streamer_nickname}} · {{live_start_time}}】 oturumunun 
 Ödül hesabınıza otomatik yatırıldı. Kişisel Merkez - Değişim Kayıtları'ndan kontrol edin (Kaynak: {{streamer_nickname}} · {{live_title}}).
 
 Katılımınız için teşekkürler!",站内信 notify_type=15；占位符勿译；来源：英文站内信模板.xlsx
+系统提示/弹窗/权限,站内信模板 - U福袋中奖 - 正文,站内信模板,"亲爱的用户，您好！
+
+你参与的场次【{{streamer_nickname}} · {{live_start_time}}】福袋已开奖。恭喜你中奖！
+
+奖品详情
+
+· 奖励金额：{{amount}} {{reward_unit}}
+· 开奖时间：{{settle_time}}
+
+奖励已自动发放至你的账户。你可在活动中心 - 活动奖励中查看到账记录（明细来源：{{streamer_nickname}} · {{live_title}}）。
+
+感谢参与，祝观看愉快！","親愛的用戶，您好！
+
+你參與的場次【{{streamer_nickname}} · {{live_start_time}}】福袋已開獎。恭喜你中獎！
+
+獎品詳情
+
+· 獎勵金額：{{amount}} {{reward_unit}}
+· 開獎時間：{{settle_time}}
+
+獎勵已自動發放至你的帳戶。你可在活動中心 - 活動獎勵中查看到帳記錄（明細來源：{{streamer_nickname}} · {{live_title}}）。
+
+感謝參與，祝觀看愉快！","Dear User, Greetings!
+
+The lucky draw for the session 【{{streamer_nickname}} · {{live_start_time}}】 you joined has been completed. Congratulations on your win!
+
+Prize Details
+
+· Prize Amount: {{amount}} {{reward_unit}}
+· Draw Time: {{settle_time}}
+
+The reward has been automatically issued to your account. You may check the receipt record in Event Center - Event Rewards (Statement Source: {{streamer_nickname}} · {{live_title}}).
+
+Thank you for your participation. Wish you a pleasant viewing experience!","Xin chào,
+
+Túi may mắn phiên 【{{streamer_nickname}} · {{live_start_time}}】 bạn tham gia đã mở thưởng. Chúc mừng bạn đã trúng!
+
+Chi tiết phần thưởng
+
+· Số tiền: {{amount}} {{reward_unit}}
+· Thời gian mở: {{settle_time}}
+
+Phần thưởng đã được cộng tự động. Bạn có thể xem tại Trung tâm Sự kiện - Phần thưởng sự kiện (Nguồn: {{streamer_nickname}} · {{live_title}}).
+
+Cảm ơn bạn đã tham gia, chúc xem vui vẻ!","عزيزي المستخدم، تحية طيبة!
+
+تم سحب حقيبة الحظ للجلسة 【{{streamer_nickname}} · {{live_start_time}}】 التي انضممت إليها. تهانينا على فوزك!
+
+تفاصيل الجائزة
+
+· مبلغ الجائزة: {{amount}} {{reward_unit}}
+· وقت السحب: {{settle_time}}
+
+تم إصدار المكافأة تلقائيًا إلى حسابك. يمكنك مراجعة السجل في مركز الفعاليات - مكافآت الفعالية (المصدر: {{streamer_nickname}} · {{live_title}}).
+
+شكرًا لمشاركتك. نتمنى لك مشاهدة ممتعة!","Estimado usuario:
+
+El sorteo de la bolsa de la suerte de la sesión 【{{streamer_nickname}} · {{live_start_time}}】 ha finalizado. ¡Enhorabuena!
+
+Detalles del premio
+
+· Importe: {{amount}} {{reward_unit}}
+· Hora del sorteo: {{settle_time}}
+
+La recompensa se ha abonado automáticamente. Puedes consultarlo en Centro de eventos - Recompensas del evento (Origen: {{streamer_nickname}} · {{live_title}}).
+
+¡Gracias por participar! Que disfrutes de la emisión.","Olá!
+
+O sorteio do lucky bag da sessão 【{{streamer_nickname}} · {{live_start_time}}】 foi concluído. Parabéns pela vitória!
+
+Detalhes do prêmio
+
+· Valor: {{amount}} {{reward_unit}}
+· Horário do sorteio: {{settle_time}}
+
+A recompensa foi creditada automaticamente. Veja em Centro de Eventos - Recompensas do evento (Origem: {{streamer_nickname}} · {{live_title}}).
+
+Obrigado por participar! Boa assistência!","Cher utilisateur, bonjour !
+
+Le tirage du lucky bag de la session 【{{streamer_nickname}} · {{live_start_time}}】 est terminé. Félicitations !
+
+Détails du lot
+
+· Montant : {{amount}} {{reward_unit}}
+· Heure du tirage : {{settle_time}}
+
+La récompense a été créditée automatiquement. Consultez Centre d'événements - Récompenses d'événement (Source : {{streamer_nickname}} · {{live_title}}).
+
+Merci de votre participation ! Bon visionnage !","こんにちは。
+
+ご参加の場次【{{streamer_nickname}} · {{live_start_time}}】の福袋が開賞しました。当選おめでとうございます！
+
+賞品詳細
+
+· 報酬額：{{amount}} {{reward_unit}}
+· 開賞時刻：{{settle_time}}
+
+報酬は自動でアカウントに付与されました。イベントセンター - イベント報酬でご確認ください（明細出典：{{streamer_nickname}} · {{live_title}}）。
+
+ご参加ありがとうございました！楽しい視聴を！","안녕하세요!
+
+참여하신 회차 【{{streamer_nickname}} · {{live_start_time}}】 럭키백이 추첨되었습니다. 당첨을 축하합니다!
+
+경품 상세
+
+· 보상 금액: {{amount}} {{reward_unit}}
+· 추첨 시간: {{settle_time}}
+
+보상이 계정으로 자동 지급되었습니다. 이벤트 센터 - 이벤트 보상에서 확인하세요(출처: {{streamer_nickname}} · {{live_title}}).
+
+참여해 주셔서 감사합니다! 즐거운 시청 되세요!","عزیز صارف، سلام!
+
+آپ کے شامل سیشن 【{{streamer_nickname}} · {{live_start_time}}】 کا لکی بیگ قرعہ مکمل ہو گیا۔ جیت پر مبارکباد!
+
+انعام کی تفصیل
+
+· رقم: {{amount}} {{reward_unit}}
+· قرعہ کا وقت: {{settle_time}}
+
+انعام خودکار طور پر اکاؤنٹ میں بھیج دیا گیا۔ ایونٹ سینٹر - ایونٹ انعامات میں دیکھیں (ماخذ: {{streamer_nickname}} · {{live_title}}).
+
+شرکت کا شکریہ! خوشگوار دیکھنے کا تجربہ!","Halo!
+
+Lucky bag sesi 【{{streamer_nickname}} · {{live_start_time}}】 yang Anda ikuti telah diundi. Selamat menang!
+
+Detail hadiah
+
+· Jumlah: {{amount}} {{reward_unit}}
+· Waktu undian: {{settle_time}}
+
+Hadiah telah otomatis dikreditkan. Cek di Pusat Acara - Hadiah Acara (Sumber: {{streamer_nickname}} · {{live_title}}).
+
+Terima kasih atas partisipasi Anda! Selamat menonton!","प्रिय उपयोगकर्ता, नमस्कार!
+
+आपके सत्र 【{{streamer_nickname}} · {{live_start_time}}】 का लकी बैग ड्रॉ पूरा हो गया। जीत पर बधाई!
+
+पुरस्कार विवरण
+
+· राशि: {{amount}} {{reward_unit}}
+· ड्रॉ समय: {{settle_time}}
+
+रिवॉर्ड स्वतः खाते में जमा हो गया। इवेंट सेंटर - इवेंट रिवॉर्ड में देखें (स्रोत: {{streamer_nickname}} · {{live_title}}).
+
+भागीदारी के लिए धन्यवाद! सुखद दर्शना अनुभव!","Здравствуйте!
+
+Розыгрыш луки-бэга сессии 【{{streamer_nickname}} · {{live_start_time}}】 завершён. Поздравляем с выигрышем!
+
+Детали приза
+
+· Сумма: {{amount}} {{reward_unit}}
+· Время розыгрыша: {{settle_time}}
+
+Награда автоматически зачислена. Проверьте в Центре событий - Награды события (Источник: {{streamer_nickname}} · {{live_title}}).
+
+Спасибо за участие! Приятного просмотра!","Merhaba!
+
+Katıldığınız 【{{streamer_nickname}} · {{live_start_time}}】 oturumunun şans torbası çekildi. Kazandığınız için tebrikler!
+
+Ödül ayrıntıları
+
+· Tutar: {{amount}} {{reward_unit}}
+· Çekiliş saati: {{settle_time}}
+
+Ödül hesabınıza otomatik yatırıldı. Etkinlik Merkezi - Etkinlik Ödülleri'nden kontrol edin (Kaynak: {{streamer_nickname}} · {{live_title}}).
+
+Katılımınız için teşekkürler! İyi seyirler!",站内信 notify_type=15；占位符勿译；查看到账路径：活动中心 - 活动奖励
 系统提示/弹窗/权限,站内信模板 - 福袋未中奖 - 正文,站内信模板,"亲爱的用户，您好！
 
 你参与的场次【{{streamer_nickname}} · {{live_start_time}}】福袋活动已开奖。
