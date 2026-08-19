@@ -407,7 +407,7 @@ titleLabel.text = "Email"
 
 For Objective-C code, use the project's `SCLocalizedString(key)` macro. For Swift (including SwiftUI) code, use `SCLocalizedText(_:)`.
 
-Before writing translations, read `translation.csv` in this skill directory as the primary translation reference. Reuse its translation when the requested key and language are present. Never modify `translation.csv`. If a translation is missing, translate it yourself while preserving placeholders such as `{{count}}`, `{{value}}`, and `{{time}}`. The CSV's `zh-CN` column is reference-only and must not be output; the project's Chinese output is `zh_TW`.
+Before writing translations, read `translation.csv` in this skill directory as the primary translation reference. First match existing rows by source text: for Chinese input, look up the text in the `zh-CN 简体中文（中国大陆）` column; for English input, look up the text in the `en-US 英文（美国）` column. When a matching row exists, reuse the translations from that same row for all output languages. If no source-text row matches, then reuse translations by the requested key and language when present. Never modify `translation.csv`. If a translation is missing, translate it yourself while preserving placeholders such as `{{count}}`, `{{value}}`, and `{{time}}`. The CSV's `zh-CN` column is reference-only and must not be output; the project's Chinese output is `zh_TW`.
 
 When generating any UI text, you must also output the corresponding localization keys and translations for all 14 project languages below. Preserve existing project keys; do not rename them just to fit a generic naming convention.
 

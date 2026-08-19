@@ -242,7 +242,7 @@ titleLabel.text = "Email"
 titleLabel.text = "Email"
 ```
 
-Before generating translations, read `OnCoinUI/translation.csv` for existing translations and reuse matching entries. Do not modify the CSV. Translate missing entries manually, preserve all placeholders, and do not output its `zh-CN` reference column; use the project's `zh_TW` language instead.
+Before generating translations, read `OnCoinUI/translation.csv` for existing translations and reuse matching entries. First match existing rows by source text: for Chinese input, look up the text in the `zh-CN 简体中文（中国大陆）` column; for English input, look up the text in the `en-US 英文（美国）` column. When a matching row exists, reuse the translations from that same row for all output languages. Do not modify the CSV. Translate missing entries manually, preserve all placeholders, and do not output its `zh-CN` reference column; use the project's `zh_TW` language instead.
 
 Output all 14 translation files alongside every generated UI file:
 
