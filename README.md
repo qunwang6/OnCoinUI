@@ -13,6 +13,7 @@
 - 🌈 **Gradients**: Prefer the project's `UIView+Gradient.swift` APIs for `UIView` and `UIButton` backgrounds
 - 🖼️ **Kingfisher image loading**: Placeholder, fade animation, cell reuse cancellation
 - 📦 **Figma PNG scales**: Build correctly mapped iOS `1x` / `2x` / `3x` image sets from the page's actual rendered size
+- 🔎 **OnCoin API lookup**: Query OnCoin MCP Swagger data before adding API calls, response models, or backend-shaped placeholder data
 - 📦 **SwiftyJSON models**: Unified `init(json: JSON)` parsing pattern
 - 🌐 **Localization**: `SCLanguageManager` with auto-output in the project's 14 supported languages
 
@@ -230,6 +231,17 @@ example_banner.imageset/
 ```
 
 Figma export scale is relative to the source node. It can differ from the target iOS scale. Generate variants from the highest-resolution source, verify their actual pixel dimensions, keep their crop identical, and reference only the base asset name in code: `UIImage(named: "example_banner")`.
+
+### OnCoin API / Data Lookup
+
+When generating or changing query API calls, response models, JSON parsing, list/detail data binding, or placeholder data that should match backend fields, use the OnCoin MCP before writing code.
+
+- Search operations with `mcp__oncoin__search_api_operations`.
+- Use `mcp__oncoin__list_api_projects` and `mcp__oncoin__list_api_modules` when the project/module is unclear.
+- Inspect the chosen endpoint with `mcp__oncoin__get_api_operation`, including its documented response/example data.
+- Extract the corresponding interface's documented return data and use it to determine list roots, pagination wrappers, nested objects, optional fields, enum values, empty-state shapes, and placeholder/mock data.
+- Inspect referenced response schemas with `mcp__oncoin__get_api_schema`, then reconcile schema definitions with the operation's documented return data.
+- If the API or documented response data is not exposed by MCP, leave a clear TODO instead of inventing endpoint paths, parameters, fields, enum values, or pagination shapes.
 
 ### Localization
 

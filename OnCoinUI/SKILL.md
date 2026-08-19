@@ -122,6 +122,17 @@ Assets.xcassets/
 - Inspect the actual pixel dimensions after export or resize. Do not finish with a missing slot, duplicated pixels under different scale labels, or a `2x`/`3x` file assigned to the wrong `Contents.json` scale.
 - Do not synthesize bitmap variants for a resource that should remain vector/PDF unless the user or target project specifically requires PNG.
 
+### 0.5. OnCoin API/Data Prerequisite
+
+When adding or modifying query API calls, response models, JSON parsing, list/detail data binding, or placeholder data that should mirror backend fields, use the OnCoin MCP before writing code:
+
+1. Search the Swagger operations with `mcp__oncoin__search_api_operations`. Filter by `project` (`api`, `admin`, or `privateapi`), `module`, HTTP `method`, or `query` when the feature context makes those values clear.
+2. If the project or module is unclear, call `mcp__oncoin__list_api_projects` and then `mcp__oncoin__list_api_modules` for the likely project. Do not invent endpoint paths, request parameters, response field names, enum values, or pagination shapes.
+3. For the selected endpoint, call `mcp__oncoin__get_api_operation` to inspect path, method, parameters, request body, response schema, business descriptions, and the documented response/example data for that exact operation.
+4. Always extract the corresponding interface's documented return data from the operation response when it is available. Use that concrete response/example payload to determine list roots, nested objects, pagination wrappers, optional fields, field types, enum values, empty-state shapes, and placeholder/mock data.
+5. When response fields reference a schema definition, call `mcp__oncoin__get_api_schema` and reconcile the schema with the operation's documented response/example data. Base the Swift/Objective-C/SwiftUI model properties and `SwiftyJSON` parsing keys on the documented return data first, then fill unresolved structure from the schema.
+6. If no matching operation, schema, or documented response data can be found, state that the OnCoin MCP did not expose the needed API data and keep network integration as a clearly marked TODO instead of guessing.
+
 ### 1. Understand the Input
 The user may provide one of the following — adapt accordingly:
 
